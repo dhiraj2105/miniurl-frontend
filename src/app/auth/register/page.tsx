@@ -3,6 +3,7 @@
 import { registerUser, saveToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,44 +25,67 @@ export default function RegisterPage() {
       const token = await registerUser(email, password);
       saveToken(token);
       router.push("/dashboard");
-    } catch (error) {
-      setError("Registration failed");
-      console.log(error);
+    } catch {
+      setError("Registration failed. Try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-md p-6 border rounded-lg">
-        <h1 className="text-2xl font-bold mb-4">Create Account</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border px-3 py-2 mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+    <div className="flex flex-1 items-center justify-center bg-white text-black px-4">
+      <div className="w-full max-w-md border border-gray-200 rounded-xl bg-white p-6 sm:p-8">
+        <h1 className="text-2xl font-bold mb-2 text-center">
+          Create your account
+        </h1>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border px-3 py-2 mb-4"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          Start shortening and managing your links
+        </p>
 
-        {error && <p className="text-red-500 mb-3">{error}</p>}
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email address"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-black"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <button
-          onClick={handleRegister}
-          disabled={loading}
-          className="w-full bg-black text-white py-2 rounded-lg border cursor-pointer"
-        >
-          {loading ? "Creating..." : "Register"}
-        </button>
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-black"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+          <button
+            onClick={handleRegister}
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-lg
+              hover:bg-gray-800 transition
+              disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Creating account..." : "Register"}
+          </button>
+
+          {/* Login link */}
+          <p className="text-sm text-gray-600 text-center pt-2">
+            Already have an account?{" "}
+            <Link
+              href="/auth/login"
+              className="text-black font-medium underline hover:text-gray-700"
+            >
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

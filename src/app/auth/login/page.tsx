@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { loginUser, saveToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,37 +28,57 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-md p-6 border rounded-lg">
-        <h1 className="text-2xl font-bold mb-4">Login</h1>
+    <div className="flex flex-1 items-center justify-center bg-white text-black px-4">
+      <div className="w-full max-w-md border border-gray-200 rounded-xl bg-white p-6 sm:p-8">
+        <h1 className="text-2xl font-bold mb-2 text-center">Welcome back</h1>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border px-3 py-2 mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          Log in to manage your shortened URLs
+        </p>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border px-3 py-2 mb-4"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email address"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-black"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        {error && <p className="text-red-500 mb-3">{error}</p>}
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-black"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-black text-white py-2 rounded-lg 
-          cursor-pointer border"
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-lg
+              hover:bg-gray-800 transition
+              disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
+          {/* Register link */}
+          <p className="text-sm text-gray-600 text-center pt-2">
+            Don’t have an account?{" "}
+            <Link
+              href="/auth/register"
+              className="text-black font-medium underline hover:text-gray-700"
+            >
+              Create one
+            </Link>
+          </p>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
