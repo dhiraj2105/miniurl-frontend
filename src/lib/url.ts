@@ -6,3 +6,8 @@ export async function shortenUrl(originalUrl: string) {
   });
   return response.data;
 }
+
+export async function fetchUserUrls() {
+  const res = await api.get("/api/user/urls");
+  return res.data;
+}
