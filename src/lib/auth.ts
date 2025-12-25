@@ -20,6 +20,7 @@ export async function loginUser(email: string, password: string) {
 
 export function saveToken(token: string) {
   localStorage.setItem("token", token);
+  document.cookie = `token=${token}; path=/`;
 }
 
 export function getToken(): string | null {
@@ -28,4 +29,5 @@ export function getToken(): string | null {
 
 export function logout() {
   localStorage.removeItem("token");
+  document.cookie = "token=; Max-Age=0; path=/";
 }
