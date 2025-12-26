@@ -4,6 +4,7 @@ import { useState } from "react";
 import { loginUser, saveToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { refreshUser } = useAuth();
   const handleLogin = async () => {
     setError("");
 
@@ -19,6 +21,8 @@ export default function LoginPage() {
       setLoading(true);
       const token = await loginUser(email, password);
       saveToken(token);
+
+      await refreshUser(); // update navbar instantly
       router.push("/dashboard");
     } catch {
       setError("Invalid email or password");
