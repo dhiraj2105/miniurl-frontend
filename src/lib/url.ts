@@ -11,3 +11,7 @@ export async function fetchUserUrls() {
   const res = await api.get("/api/user/urls");
   return res.data;
 }
+
+export async function deleteUserUrl(urlId: number) {
+  await api.delete(`/api/user/urls/${urlId}`);
+}
