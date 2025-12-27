@@ -35,9 +35,14 @@ export default function AnalyticsPanel({
         <div className="space-y-3">
           <div>
             <p className="text-sm text-gray-500">Short URL</p>
-            <p className="font-medium break-all">
+            <a
+              href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${selected.shortCode}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium break-all text-blue-600 hover:underline"
+            >
               {process.env.NEXT_PUBLIC_API_BASE_URL}/{selected.shortCode}
-            </p>
+            </a>
           </div>
 
           <div>
