@@ -6,11 +6,12 @@ import { fetchUserUrls, deleteUserUrl } from "@/lib/url";
 import UrlShortenerForm from "@/components/UrlShortenerForm";
 import UrlList from "@/components/UrlList";
 import AnalyticsPanel from "@/components/AnalyticsPanel";
-import { UrlItem, Analytics } from "@/types";
+import { UrlItem, Analytics, SortOption } from "@/types";
 
 export default function DashboardPage() {
   const [urls, setUrls] = useState<UrlItem[]>([]);
   const [selected, setSelected] = useState<Analytics | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const [confirming, setConfirming] = useState(false);
   const [confirmText, setConfirmText] = useState("");
 
+  /* -------------------- Load URLs -------------------- */
   const loadUrls = () => {
     setLoading(true);
     fetchUserUrls()
@@ -31,6 +33,7 @@ export default function DashboardPage() {
     loadUrls();
   }, []);
 
+  /* -------------------- Load Analytics -------------------- */
   const loadAnalytics = async (shortCode: string) => {
     try {
       const data = await fetchAnalytics(shortCode);
@@ -50,6 +53,7 @@ export default function DashboardPage() {
     }
   };
 
+  /* -------------------- Delete URL -------------------- */
   const handleDelete = async () => {
     if (!selected) return;
 
@@ -67,6 +71,17 @@ export default function DashboardPage() {
     }
   };
 
+  /* -------------------- Sorting (Persisted) -------------------- */
+  useEffect(() => {
+    const saved = localStorage.getItem("url-sort");
+    if (saved) setSortBy(saved as SortOption);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("url-sort", sortBy);
+  }, [sortBy]);
+
+  /* -------------------- UI -------------------- */
   return (
     <div className="flex flex-1 bg-white text-black px-4 sm:px-6 py-8">
       <div className="w-full max-w-7xl mx-auto">
@@ -80,6 +95,7 @@ export default function DashboardPage() {
           <p className="text-gray-600">Loading your URLs…</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* LEFT */}
             <div className="lg:col-span-2 space-y-6">
               <div className="border border-gray-200 rounded-xl p-5">
                 <h2 className="text-lg font-semibold mb-4">
@@ -92,9 +108,12 @@ export default function DashboardPage() {
                 urls={urls}
                 selectedId={selected?.id || null}
                 onSelect={loadAnalytics}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
               />
             </div>
 
+            {/* RIGHT */}
             <AnalyticsPanel
               selected={selected}
               deleting={deleting}

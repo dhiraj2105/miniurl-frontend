@@ -1,23 +1,79 @@
 "use client";
 
-import { UrlItem } from "@/types";
+import { UrlItem, SortOption } from "@/types";
 
 interface UrlListProps {
   urls: UrlItem[];
   selectedId: number | null;
   onSelect: (shortCode: string) => void;
+  sortBy: SortOption;
+  onSortChange: (value: SortOption) => void;
 }
 
-export default function UrlList({ urls, selectedId, onSelect }: UrlListProps) {
+function sortUrls(urls: UrlItem[], sortBy: SortOption) {
+  const sorted = [...urls];
+
+  switch (sortBy) {
+    case "oldest":
+      return sorted.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+
+    case "most-clicks":
+      return sorted.sort((a, b) => b.clickCount - a.clickCount);
+
+    case "least-clicks":
+      return sorted.sort((a, b) => a.clickCount - b.clickCount);
+
+    case "newest":
+    default:
+      return sorted; // already sorted by backend
+  }
+}
+
+export default function UrlList({
+  urls,
+  selectedId,
+  onSelect,
+  sortBy,
+  onSortChange,
+}: UrlListProps) {
+  const sortedUrls = sortUrls(urls, sortBy);
+
   return (
     <div className="border border-gray-200 rounded-xl p-5">
-      <h2 className="text-lg font-semibold mb-4">Your URLs</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Your URLs</h2>
 
-      {urls.length === 0 ? (
+        <select
+          value={sortBy}
+          onChange={(e) => onSortChange(e.target.value as SortOption)}
+          className="border border-black px-4 py-2 rounded-lg
+             text-black font-medium
+             hover:bg-black hover:text-white
+             transition cursor-pointer"
+        >
+          <option className="cursor-pointer" value="newest">
+            Newest
+          </option>
+          <option className="cursor-pointer" value="oldest">
+            Oldest
+          </option>
+          <option className="cursor-pointer" value="most-clicks">
+            Most clicks
+          </option>
+          <option className="cursor-pointer" value="least-clicks">
+            Least clicks
+          </option>
+        </select>
+      </div>
+
+      {sortedUrls.length === 0 ? (
         <p className="text-gray-600">You haven’t created any URLs yet.</p>
       ) : (
         <ul className="space-y-3">
-          {urls.map((item) => (
+          {sortedUrls.map((item) => (
             <li
               key={item.id}
               onClick={() => onSelect(item.shortCode)}
@@ -33,9 +89,14 @@ export default function UrlList({ urls, selectedId, onSelect }: UrlListProps) {
                 {item.originalUrl}
               </p>
 
-              <p className="text-sm text-gray-500 mt-1">
-                Clicks: {item.clickCount}
-              </p>
+              <div className="flex justify-between mt-1">
+                <p className="text-sm text-gray-500">
+                  Clicks: {item.clickCount}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {new Date(item.createdAt).toLocaleDateString()}
+                </p>
+              </div>
             </li>
           ))}
         </ul>

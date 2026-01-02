@@ -15,3 +15,6 @@ export interface Analytics {
   clickCount: number;
   createdAt: string;
 }
+
+/* Sort types */
+export type SortOption = "newest" | "oldest" | "most-clicks" | "least-clicks";
